@@ -34,7 +34,7 @@ data = util.one_hot_encoding(util.categorized_columns, data)
 batch_size = 5
 test_perc = 0.1
 dropout_prob = 0.15
-epochs = 13
+epochs = 6
 
 
 train_loader, test_loader, input_size, \
@@ -45,7 +45,7 @@ model = torch_model_arch.net(input_size, classifiers_size, dropout_prob)
 # model.load_state_dict(torch.load('model.pth'))
 model.to(util.device)
 model_loss = nn.CrossEntropyLoss().to(util.device)
-model_optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-5)
+model_optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-5, momentum=0.3)
 # It only works on modern GPUs. It actually enhances the training speed.
 # model = torch.compile(model, mode='reduce-overhead')
 
