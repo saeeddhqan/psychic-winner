@@ -2,24 +2,15 @@ import numpy
 import pandas
 import random
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-
 import matplotlib.pyplot as plt
 import seaborn as sns
+import tqdm
 
-from util import util
-
-
-
-
-import pandas
+from util import util, torch_model_arch
 
 import torch
 import torch.nn as nn
 
-from util import util, torch_model_arch
 
 """
 	This model is a manually designed model.
@@ -58,12 +49,14 @@ model_optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-5)
 # It only works on modern GPUs. It actually enhances the training speed.
 # model = torch.compile(model, mode='reduce-overhead')
 
-
+accuracy = 0.0
 # Train the model
 for epoch in range(epochs):
 	running_loss = 0.0
 	# Training loop
-	for i, (inputs, labels) in enumerate(train_loader, 0):
+	for (inputs, labels) in tqdm.tqdm(train_loader,
+			desc='Train(epoch: {:d}, test accuracy: {:.3f})'.format(epoch, accuracy),
+			ncols=120, leave=False):
 		outputs = model(inputs)
 		loss = model_loss(outputs, labels)
 		model_optimizer.zero_grad()
@@ -71,9 +64,6 @@ for epoch in range(epochs):
 		model_optimizer.step()
 
 		running_loss += loss.item()
-		if i % 100 == 99:
-			print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
-			running_loss = 0.0
 
 	# Turning off backprop, etc. for evaluation
 	model.eval()
@@ -92,13 +82,15 @@ for epoch in range(epochs):
 			y_pred.extend(batch_pred.cpu().tolist())
 
 	c_matrix, accuracy, precision, recall, f1_score = util.model_scoring(y_pred, y_test)
-	print('\nConfusion matrix:')
-	print(c_matrix)
-	print('Accuracy:', accuracy)
-	print('Precision:', precision)
-	print('Recall:', recall)
-	print('F1-score:', f1_score)
+
 
 	model.train()
+
+print('\nConfusion matrix:')
+print(c_matrix)
+print('Accuracy:', accuracy)
+print('Precision:', precision)
+print('Recall:', recall)
+print('F1-score:', f1_score)
 
 torch.save(model.state_dict(), 'model.pth')
