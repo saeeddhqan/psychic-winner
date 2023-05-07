@@ -33,6 +33,7 @@ The following packages are required to run the notebooks and scripts in this rep
 - Matplotlib, seaborn
 - Deap
 - Numpy
+- tqdm
 
 ## How to Use
 
