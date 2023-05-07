@@ -1,9 +1,5 @@
-import numpy
 import pandas
-import random
 
-import matplotlib.pyplot as plt
-import seaborn as sns
 import tqdm
 
 from util import util, torch_model_arch
@@ -32,13 +28,13 @@ data = util.one_hot_encoding(util.categorized_columns, data)
 #### Tensors' journey
 
 batch_size = 5
-test_perc = 0.1
+test_prob = 0.1
 dropout_prob = 0.15
 epochs = 6
 
 
 train_loader, test_loader, input_size, \
-	classifiers_size, test_size = util.data_splitter_tensor_binary(data, util.target_column, batch_size, test_perc)
+	classifiers_size, test_size = util.data_splitter_tensor_binary(data, util.target_column, batch_size, test_prob)
 
 
 model = torch_model_arch.net(input_size, classifiers_size, dropout_prob)
@@ -72,7 +68,7 @@ for epoch in range(epochs):
 	y_pred = []
 
 	with torch.no_grad():
-		for (inputs, labels) in test_loader:
+		for inputs, labels in test_loader:
 			logits = model(inputs)
 			# normalized = torch.softmax(logits, dim=1) # Doing this only because of roc_auc_score
 			batch_pred = torch.argmax(logits, dim=1)
