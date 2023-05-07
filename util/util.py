@@ -19,8 +19,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # device = torch.device('cpu')
 
 categorized_columns = ['PaymentMethod', 'PaperlessBilling', 'Contract', 'StreamingMovies', 'StreamingTV', 
-        'TechSupport', 'DeviceProtection', 'OnlineBackup', 'OnlineSecurity', 'InternetService', 'MultipleLines',
-        'PhoneService', 'Dependents', 'Partner', 'SeniorCitizen', 'gender']
+	'TechSupport', 'DeviceProtection', 'OnlineBackup', 'OnlineSecurity', 'InternetService', 'MultipleLines',
+	'PhoneService', 'Dependents', 'Partner', 'SeniorCitizen', 'gender']
 numerical_columns = ['TotalCharges', 'MonthlyCharges', 'tenure']
 target_column = 'Churn'
 dataset_filename='data/WA_Fn-UseC_-Telco-Customer-Churn.csv'
@@ -106,11 +106,13 @@ def model_scoring(
 	return c_matrix, accuracy, precision, recall, f1_score
 
 
+
 def data_splitter_tensor_binary(
 		data: 'Pandas data type',
 		target_column: 'Target column',
 		batch_size: 'Data batch size',
-		test_perc: 'Test size'
+		test_perc: 'Test size',
+		dataloader_ins: bool = True,
 	):
 	"""
 		Splitting data based on test_perc, batch_size and target_column and returning DataLoader instances
@@ -124,18 +126,17 @@ def data_splitter_tensor_binary(
 	classifiers_size = 2
 	test_size = X_test.shape[0]
 
-
 	one_hot_matrix = torch.eye(classifiers_size).to(device)
 
 	train_target, test_target = one_hot_matrix[y_train.values], one_hot_matrix[y_test.values]
 
 	train_data = torch.tensor(X_train.values, dtype=torch.float32, device=device)
 	test_data = torch.tensor(X_test.values, dtype=torch.float32, device=device)
-
 	train_dataset = TensorDataset(train_data, train_target)
-	# Turning off shuffle simply decreases performance by ~1%
-	train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 	test_dataset = TensorDataset(test_data, test_target)
-	test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+	if dataloader_ins:
+		# Turning off shuffle simply decreases performance by ~1%
+		train_dataset = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+		test_dataset = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-	return train_loader, test_loader, input_size, classifiers_size, test_size
+	return train_dataset, test_dataset, input_size, classifiers_size, test_size
