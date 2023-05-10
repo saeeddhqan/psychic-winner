@@ -10,7 +10,7 @@ This repository contains a classification model implemented using PyTorch. We al
 - `model_hype_opt.ipynb`: This notebook focuses on hyperparameter tuning using GA based on the NAS found elements for the network architecture.
 - `model_optimized.py`: This is the optimized model, which is the result of NAS and hyperparameter space search.
 - `feature_selection.ipynb`: This notebook focuses on feature selection using GA, utilizing crisp data for filtering features.
-- `model_pbt.py`: This the an adjusted version of Population Based Training(PBT).  I added some features to the base algorithm(such as elitism, usual cortex mutation, and early stopping). It was able to acheive 0.834 accuracy, outperforming the previous model(model_optimized.py with 0.831 accuracy)
+- `model_pbt.py`: This is an adjusted version of Population Based Training(PBT).  I added some features to the base algorithm(such as elitism, usual cortex mutation, and early stopping). It was able to acheive 0.836 accuracy, outperforming the previous model(model_optimized.py with 0.831 accuracy)
 - `model_optimized_pbt.py`: It runs the top model trained by PBT.
 - `util/util.py`: Utility functions.
 - `util/elitism.py`: Using elitism technique in Genetic Algorithm. For further detail, look at the model_nas, where we describe the method.

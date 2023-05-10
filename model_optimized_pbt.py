@@ -25,7 +25,7 @@ data = util.one_hot_encoding(util.categorized_columns, data)
 batch_size = 5
 test_prob = 0.1
 dropout_prob = 0.05 # whatever
-model_path = 'individuals/ind-000.pth'
+model_path = 'data/best_performed_model.pth'
 
 train_loader, test_loader, input_size, \
 	classifiers_size, test_size = util.data_splitter_tensor_binary(data, util.target_column, batch_size, test_prob)

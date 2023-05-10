@@ -1,11 +1,17 @@
+import torch
 import torch.nn as nn
+from util import util
 
-params = [256, 256, 256]
+"""
+	Models and architectures for training.
+"""
+
+params = [256, 256]
 
 class net(nn.Module):
 	def __init__(self, input_size, output_size, dropout_prob):
 		super().__init__()
-		# Using LayerNorm reduces epoch size perfectly
+		# Using LayerNorm reduces epoch size
 		self.encoder = nn.Sequential(
 			nn.Linear(input_size, params[0]), nn.Sigmoid(), nn.LayerNorm(params[0]), nn.Dropout(dropout_prob),
 			nn.Linear(params[0], params[1]), nn.ReLU(), nn.LayerNorm(params[1]), nn.Dropout(dropout_prob),

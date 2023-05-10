@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from util import util
 
 """
-	trainer class receives model, optimizer, loss and data to to train, save, load, and test a model.
+	Trainer class receives model, optimizer, loss and data to to train, save, load, and test a model.
 """
 
 
@@ -24,6 +24,7 @@ class trainer:
 		self.task_id = None
 		self.task_score = 0
 		self.filename = filename
+		self.trainable = None
 
 	def set_id(self, num):
 		self.task_id = num
@@ -56,7 +57,6 @@ class trainer:
 		"""
 			Train model on the provided data set.
 		"""
-		self.batch_size = 5
 		self.model.train()
 		dataloader = DataLoader(self.train_data, self.batch_size, True)
 		for epoch in range(self.train_epoch):
