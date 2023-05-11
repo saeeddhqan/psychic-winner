@@ -1,15 +1,23 @@
+
 from deap import tools
 from deap import algorithms
 
 import multiprocessing
 
+"""
+	This function is a modification version of eaSimple from DEAP(https://github.com/DEAP/deap). We are using Elitism technique
+	for getting better performance for searching. Elitism is a technique that allows best performed individuals in the generation
+	to go to the next generation without modification and random selection.
+"""
+
 
 def eaSimpleWithElitism(population, toolbox, cxpb, mutpb, ngen, stats=None,
-			 halloffame=None, verbose=__debug__, multiproc=False, proc_pool=3):
+			halloffame=None, verbose=__debug__, multiproc=False, proc_pool=3):
 	"""
 		This algorithm is similar to DEAP eaSimple() algorithm, with some modifications like 
 		adding elitism and parallel processing features.
 	"""
+
 	logbook = tools.Logbook()
 	logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 

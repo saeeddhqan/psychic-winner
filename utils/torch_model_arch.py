@@ -1,12 +1,13 @@
-import torch
+
 import torch.nn as nn
-from util import util
+
 
 """
 	Models and architectures for training.
 """
 
 params = [256, 256]
+
 
 class net(nn.Module):
 	def __init__(self, input_size, output_size, dropout_prob):
@@ -21,6 +22,7 @@ class net(nn.Module):
 	def forward(self, x):
 		logits = self.encoder(x)
 		return logits
+
 
 class net_search(nn.Module):
 	def __init__(self, input_size, output_size, dropout_prob, act_functions):

@@ -3,7 +3,7 @@ import tqdm
 import torch
 from torch.utils.data import DataLoader
 
-from util import util
+from utils import util
 
 """
 	Trainer class receives model, optimizer, loss and data to to train, save, load, and test a model.
@@ -13,7 +13,7 @@ from util import util
 class trainer:
 
 	def __init__(self, model, model_optimizer, model_loss, train_data,
-				 test_data, batch_size, train_epoch, filename):
+				test_data, batch_size, train_epoch, filename):
 		self.model = model
 		self.model_optimizer = model_optimizer
 		self.model_loss = model_loss
@@ -27,9 +27,15 @@ class trainer:
 		self.trainable = None
 
 	def set_id(self, num):
+		"""
+			Set id for the model.
+		"""
 		self.task_id = num
 
 	def set_score(self, num):
+		"""
+			Set score for the model.
+		"""
 		self.task_score = num
 
 	def save(self):
@@ -37,8 +43,8 @@ class trainer:
 			Save a model.
 		"""
 		individual = dict(model_state_dict=self.model.state_dict(),
-						  optim_state_dict=self.model_optimizer.state_dict(),
-						  batch_size=self.batch_size)
+						optim_state_dict=self.model_optimizer.state_dict(),
+						batch_size=self.batch_size)
 		torch.save(individual, self.filename)
 
 	def load(self):
@@ -55,14 +61,14 @@ class trainer:
 
 	def train(self):
 		"""
-			Train model on the provided data set.
+			Train the model on the provided data set.
 		"""
 		self.model.train()
 		dataloader = DataLoader(self.train_data, self.batch_size, True)
 		for epoch in range(self.train_epoch):
 			for inputs, labels in tqdm.tqdm(dataloader,
-							   desc='Train (epoch {}, individual {})'.format(epoch, self.task_id),
-							   ncols=100, leave=False):
+							desc='Train (epoch {}, individual {})'.format(epoch, self.task_id),
+							ncols=100, leave=False):
 				output = self.model(inputs)
 				loss = self.model_loss(output, labels)
 				self.model_optimizer.zero_grad()
@@ -77,9 +83,9 @@ class trainer:
 		y_test = []
 		y_pred = []
 		self.batch_size = 5
-		dataloader = tqdm.tqdm(DataLoader(self.test_data, self.batch_size, True),
-							   desc='Eval (individual {})'.format(self.task_id),
-							   ncols=80, leave=True)
+		dataloader = tqdm.tqdm(DataLoader(self.test_data, self.batch_size, False),
+							desc='Eval (individual {})'.format(self.task_id),
+							ncols=80, leave=True)
 
 		with torch.no_grad():
 			for inputs, labels in dataloader:
@@ -91,4 +97,3 @@ class trainer:
 
 		_, accuracy, _, _, _ = util.model_scoring(y_pred, y_test)
 		self.set_score(accuracy)
-

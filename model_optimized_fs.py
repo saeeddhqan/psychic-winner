@@ -7,7 +7,8 @@ import torch.nn as nn
 from utils import util, torch_model_arch
 
 """
-	Here we try to evaluate the model that optimized with a modification of Population Based Training(PBT).
+	This model is a mirror of manually designed model(model.py) but 
+	optimized with NAS, hyperparameter space search, and feature selection.
 """
 
 data = pandas.read_csv(util.dataset_filename)
@@ -23,29 +24,43 @@ data = util.one_hot_encoding(util.categorized_columns, data)
 # ---- Tensors' journey
 
 batch_size = 5
+epochs = 6
 test_prob = 0.1
-dropout_prob = 0.05
-model_path = 'data/best_performed_model_pbt.pth'
-
+lr = 3.8093424453229945e-05
+dropout_prob = 0.05195051965108121
 train_loader, test_loader, input_size, \
 	classifiers_size, test_size = util.data_splitter_tensor_binary(data, util.target_column, batch_size, test_prob)
 
+filepath = 'data/model_optimized_fs.pth'
+
+
+def main(selected_features):
+	torch.manual_seed(util.seed)
+	model = torch_model_arch.net_search(input_size, classifiers_size, dropout_prob, [nn.Tanh, nn.ReLU])
+	model.to(util.device)
+	model_loss = nn.CrossEntropyLoss().to(util.device)
+	model_optimizer = torch.optim.RMSprop(model.parameters(), lr=lr)
+	for epoch in range(epochs):
+		for inputs, labels in train_loader:
+			inputs = inputs * selected_features
+			outputs = model(inputs)
+			loss = model_loss(outputs, labels)
+			model_optimizer.zero_grad()
+			loss.backward()
+			model_optimizer.step()
+	torch.save(model.state_dict(), filepath)
+
 
 def eval_mode():
-	"""
-		It loads the best performed model(model_path) and evaluate it with confusion matrix, etc.
-	"""
-
 	model = torch_model_arch.net_search(input_size, classifiers_size, dropout_prob, [nn.Tanh, nn.ReLU])
-	load = torch.load(model_path)
-	model.load_state_dict(load['model_state_dict'])
+	model.load_state_dict(torch.load(filepath))
 	model.to(util.device)
 	model.eval()
 	y_test = []
 	y_pred = []
 
 	with torch.no_grad():
-		for (inputs, labels) in test_loader:
+		for inputs, labels in test_loader:
 			logits = model(inputs)
 			batch_pred = torch.argmax(logits, dim=1)
 			batch_labels = torch.argmax(labels, dim=1)
@@ -62,5 +77,9 @@ def eval_mode():
 	return accuracy
 
 
+selected_features = [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1]
+selected_features = torch.tensor(selected_features).to(util.device)
+
 if __name__ == '__main__':
+	main(selected_features)
 	eval_mode()
