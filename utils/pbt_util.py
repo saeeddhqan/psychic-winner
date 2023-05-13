@@ -42,21 +42,21 @@ def smart_mut_polynomial_bounded(
 	x = gene_value
 	rand = random.random()
 
-	treshold = 0.5
+	threshold = 0.5
 
 	joined = zip(all_genes, all_scores)
 	upper = [x for x in joined if x[1] > gene_score]
 
 	if len(upper) > 0:  # If the gene is the top gene, the condition will be false
 		upper_mean = sum([x[0] for x in upper]) / len(upper)
-		treshold = 1.0 - len(upper) / len(all_genes)  # It has a bias towards top genes with less frequency. More diversity.
+		threshold = 1.0 - len(upper) / len(all_genes)  # It has a bias towards top genes with less frequency. More diversity.
 		sign = numpy.sign(upper_mean - gene_value)
 		if sign == 1:
-			treshold = 1.0 - treshold
+			threshold = 1.0 - threshold
 
 	# deviation = abs(upper_mean - x)
 	seed = random.random()
-	if rand < treshold:  # Positive
+	if rand < threshold:  # Positive
 		delta = seed * abs(x - up)
 		x += delta * eta
 	else:  # Negative

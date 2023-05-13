@@ -75,7 +75,7 @@ def main():
 				y_pred.extend(batch_pred.cpu().tolist())
 
 		model.train()
-		c_matrix, accuracy, precision, recall, f1_score = util.model_scoring(y_pred, y_test)
+		c_matrix, accuracy, precision, recall, f1_score, f05 = util.model_scoring(y_pred, y_test)
 
 		print('\nConfusion matrix:')
 		print(c_matrix)
@@ -83,7 +83,9 @@ def main():
 		print('Precision:', precision)
 		print('Recall:', recall)
 		print('F1-score:', f1_score)
-	return accuracy
+		print('F05-score:', f05)
+
+	return accuracy, precision
 
 
 if __name__ == '__main__':

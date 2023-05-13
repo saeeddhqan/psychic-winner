@@ -9,3 +9,7 @@ tqdm
 pytest
 pyflakes
 pycodestyle
+imblearn
+xgboost
+catboost
+lightgbm

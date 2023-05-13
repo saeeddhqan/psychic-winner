@@ -67,13 +67,15 @@ def eval_mode():
 			y_test.extend(batch_labels.cpu().tolist())
 			y_pred.extend(batch_pred.cpu().tolist())
 
-	c_matrix, accuracy, precision, recall, f1_score = util.model_scoring(y_pred, y_test)
+	c_matrix, accuracy, precision, recall, f1_score, f05 = util.model_scoring(y_pred, y_test)
 	print('\nConfusion matrix:')
 	print(c_matrix)
 	print('Accuracy:', accuracy)
 	print('Precision:', precision)
 	print('Recall:', recall)
 	print('F1-score:', f1_score)
+	print('F05-score:', f05)
+
 	return accuracy
 
 

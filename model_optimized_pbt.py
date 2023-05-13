@@ -25,7 +25,8 @@ data = util.one_hot_encoding(util.categorized_columns, data)
 batch_size = 5
 test_prob = 0.1
 dropout_prob = 0.05
-model_path = 'data/best_performed_model_pbt.pth'
+# model_path = 'data/best_performed_model_pbt_precision.pth'
+model_path = 'data/best_performed_model_pbt_accuracy.pth'
 
 train_loader, test_loader, input_size, \
 	classifiers_size, test_size = util.data_splitter_tensor_binary(data, util.target_column, batch_size, test_prob)
@@ -52,14 +53,16 @@ def eval_mode():
 			y_test.extend(batch_labels.cpu().tolist())
 			y_pred.extend(batch_pred.cpu().tolist())
 
-	c_matrix, accuracy, precision, recall, f1_score = util.model_scoring(y_pred, y_test)
+	c_matrix, accuracy, precision, recall, f1_score, f05 = util.model_scoring(y_pred, y_test)
 	print('\nConfusion matrix:')
 	print(c_matrix)
 	print('Accuracy:', accuracy)
 	print('Precision:', precision)
 	print('Recall:', recall)
 	print('F1-score:', f1_score)
-	return accuracy
+	print('F05-score:', f05)
+
+	return accuracy, precision
 
 
 if __name__ == '__main__':

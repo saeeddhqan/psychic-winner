@@ -1,7 +1,7 @@
 
 from utils import util
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, fbeta_score
 
 import pandas
 import numpy
@@ -121,14 +121,15 @@ def test_model_scoring():
 	labels = [1, 0, 1, 1, 0]
 	predicted = [1, 0, 0, 1, 0]
 	# Getting results
-	c_matrix, accuracy, precision, recall, f1 = util.model_scoring(predicted, labels)
+	c_matrix, accuracy, precision, recall, f1, f05 = util.model_scoring(predicted, labels)
 
 	# Expected results. It's ridiculous to get scores with the way that the actual code should be :)
-	expected_c_matrix = numpy.array([[2, 0], [1, 2]])
+	expected_c_matrix = confusion_matrix(labels, predicted)
 	expected_accuracy = accuracy_score(labels, predicted)
 	expected_precision = precision_score(labels, predicted)
 	expected_recall = recall_score(labels, predicted)
 	expected_f1 = f1_score(labels, predicted)
+	expected_fbeta = fbeta_score(labels, predicted, beta=0.5)
 
 	# Test confusion matrix
 	assert numpy.array_equal(c_matrix, expected_c_matrix), f"Got '{c_matrix}', wanted '{expected_c_matrix}'"
@@ -144,6 +145,9 @@ def test_model_scoring():
 
 	# Test F1 score
 	assert f1 == expected_f1, f"Got '{f1}', wanted '{expected_f1}'"
+
+	# Test F0.5 score
+	assert f05 == expected_fbeta, f"Got '{f05}', wanted '{expected_fbeta}'"
 
 
 def test_data_splitter_tensor_binary():

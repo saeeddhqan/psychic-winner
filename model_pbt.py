@@ -29,12 +29,13 @@ data = util.one_hot_encoding(util.categorized_columns, data)
 batch_size = 5
 test_prob = 0.1
 dropout_prob = 0.05195051965108121
-train_epoch = 3
+train_epoch = 6
 
+precision_criterion = True
 generation_size = 10
 population_size = 30
-early_stopping = 0.825
-act_functions = [torch.nn.ReLU, torch.nn.ReLU]
+early_stopping = 0.75
+act_functions = [torch.nn.Tanh, torch.nn.ReLU]
 
 train_loader, test_loader, input_size, \
 	classifiers_size, test_size = util.data_splitter_tensor_binary(data, util.target_column, batch_size, test_prob, dataloader_ins=False)
@@ -83,7 +84,7 @@ for generation in range(generation_size):
 		if model.task_score < early_stopping:
 			model.load()
 			model.train()
-			model.eval()
+			model.eval(use_precision=precision_criterion)
 			model.save()
 			_any = True
 		else:

@@ -75,7 +75,7 @@ class trainer:
 				loss.backward()
 				self.model_optimizer.step()
 
-	def eval(self):
+	def eval(self, use_precision=False):
 		"""
 			Evaluate model on the provided test set.
 		"""
@@ -95,5 +95,7 @@ class trainer:
 				y_test.extend(batch_labels.cpu().tolist())
 				y_pred.extend(batch_pred.cpu().tolist())
 
-		_, accuracy, _, _, _ = util.model_scoring(y_pred, y_test)
+		_, accuracy, precision, _, _, _ = util.model_scoring(y_pred, y_test)
 		self.set_score(accuracy)
+		if use_precision:
+			self.set_score(precision)

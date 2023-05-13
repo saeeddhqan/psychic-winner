@@ -8,8 +8,9 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, fbeta_score
 
+from imblearn.over_sampling import SMOTE
 
 """
 	Pandas utilities, such as integration, rescaling, spliting and scoring functions are here.
@@ -106,15 +107,14 @@ def model_scoring(
 	"""
 
 	c_matrix = confusion_matrix(labels, predicted)
-	TP, FP = tuple(c_matrix[0])
-	FN, TN = tuple(c_matrix[1])
-	# we could use sklearn.metrics accuracy_score, precision_score, recall_score, and f1_score.
-	precision = TP / (TP + FP) 
-	accuracy = (TP + TN) / (TP + FP + FN + TN)
-	recall = TP / (TP + FN)
-	f1_score = 2 * (precision * recall) / (precision + recall)
 
-	return c_matrix, accuracy, precision, recall, f1_score
+	accuracy = accuracy_score(labels, predicted)
+	precision = precision_score(labels, predicted)
+	recall = recall_score(labels, predicted)
+	f1 = f1_score(labels, predicted)
+	f05_score = fbeta_score(labels, predicted, beta=0.5)
+
+	return c_matrix, accuracy, precision, recall, f1, f05_score
 
 
 def data_splitter_tensor_binary(
@@ -129,18 +129,25 @@ def data_splitter_tensor_binary(
 	X = data.drop(target_column, axis=1)
 	y = data[target_column]
 
+	# oversampler = SMOTE(sampling_strategy=1)
+
 	# Split the data into train and test sets
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_perc, random_state=seed)
-	input_size = X_train.shape[1]
+	# _, test_x, _, test_y = train_test_split(X, y, test_size=test_perc, random_state=seed)
+	# X, y = oversampler.fit_resample(X, y)
+	# train_x, _, train_y, _ = train_test_split(X, y, test_size=test_perc, random_state=seed)
+
+	train_x, test_x, train_y, test_y = train_test_split(X, y, test_size=test_perc, random_state=seed)
+
+	input_size = train_x.shape[1]
 	classifiers_size = 2
-	test_size = X_test.shape[0]
+	test_size = test_x.shape[0]
 
 	one_hot_matrix = torch.eye(classifiers_size).to(device)
 
-	train_target, test_target = one_hot_matrix[y_train.values], one_hot_matrix[y_test.values]
+	train_target, test_target = one_hot_matrix[train_y.values], one_hot_matrix[test_y.values]
 
-	train_data = torch.tensor(X_train.values, dtype=torch.float32, device=device)
-	test_data = torch.tensor(X_test.values, dtype=torch.float32, device=device)
+	train_data = torch.tensor(train_x.values, dtype=torch.float32, device=device)
+	test_data = torch.tensor(test_x.values, dtype=torch.float32, device=device)
 	train_dataset = TensorDataset(train_data, train_target)
 	test_dataset = TensorDataset(test_data, test_target)
 	if dataloader_ins:
