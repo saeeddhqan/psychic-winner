@@ -1,7 +1,7 @@
 
 # Python AI challenge
 
-This repository contains a classification model implemented using PyTorch and sklearn. We utilized Scikit-learn, Pandas, and Matplotlib for numerical analysis, feature engineering, and more. Furthermore, we used Genetic Algorithm for Neural Architecture Search, hyperparameter tuning to optimize the model's performance, and feature selection. A modified version of [Population Based Training](https://www.deepmind.com/blog/population-based-training-of-neural-networks)(PBT) was implemented for training models. The final accuracy I got is <b>0.841</b> with Torch, but I got > 0.85 when I used oversampling technique. I used Pytest for testing, pyflakes as the linter, and pycodestyle for style.
+This repository contains a classification model implemented by PyTorch and sklearn. We utilized Scikit-learn, Pandas, and Matplotlib for numerical analysis, feature engineering, and more. Furthermore, we used Genetic Algorithm for Neural Architecture Search, hyperparameter tuning to optimize the model's performance, and feature selection. A modified version of [Population Based Training](https://www.deepmind.com/blog/population-based-training-of-neural-networks)(PBT) was implemented for training models. The final accuracy I got is <b>0.841</b> with Torch, but I got > 0.85 when I used undersampling/oversampling techniques. I used Pytest for testing, pyflakes as the linter, and pycodestyle for style.
 
 ## Files
 
@@ -23,7 +23,13 @@ This repository contains a classification model implemented using PyTorch and sk
 After tuning the neural network with `model_nas` and `model_hype_opt`, the accuracy increased by approximately ~1%. The PBT algorithm goes a little further(from 0.831 to 0.836). PBT is almost 2x faster than model_nas and model_hype_opt for producing top models. Finally, training a model by removing redundant features gave us ~1% more accuracy.
 
 ## colloquial description
-I started creating a torch model, trained it on 90% of dataset, tested it on the rest, and in the first executions, I got >= 80% accuracy. After my first commit, I wanted to apply the Genetic Algorithm for Neural Architecture Search, hyperparameter space search, and feature selection. I had the elitism code before; encoding chromosomes, etc. weren't an issue, but, it took me forever to optimize generations, individuals, mutation_prob, crossover_prob parameters, and search the space with GA. And in this process, I made a blunder mistake: Doing feature selection after NAS and hyperparameter tuning. btw, I got what I wanted but I might get better results(who knows?). I did a lot of work to explore the space. The model_pbt works perfectly, especially when I implemented some of my own ideas. With sklearn, I got much better results when I used borderline SMOTE for the skewed class. I didn't experiment the effect of borderline SMOTE on Torch models. I hope I have met (at least some of) your expectations.
+I started creating a torch model, trained it on 90% of dataset, tested it on the rest, and in the first executions, I got >= 80% accuracy. After my first commit, I wanted to apply the Genetic Algorithm for Neural Architecture Search, hyperparameter space search, and feature selection. I had the elitism code before; encoding chromosomes, etc. weren't an issue, but, it took me forever to optimize generations, individuals, mutation_prob, crossover_prob parameters, and search the space with GA. And in this process, I made a blunder mistake: Doing feature selection after NAS and hyperparameter tuning. btw, I got what I wanted but I might get better results(who knows?). I did a lot of work to explore the space. The model_pbt works perfectly, especially when I implemented some of my own ideas. With sklearn, I got much better results when I used borderline SMOTE, SVMSMOTE, and Tomek Links for the skewed class. 
+Here's a list of TODOs for further explorations:
+ - Using autoencoder for feature selection and dimention reduction.
+ - Using random autoencoder for creating over sampling data.
+ - Experiment the effect of under|over sampling methods on Torch models.
+
+I hope I have met (at least some of) your expectations.
 
 ## Requirements
 
