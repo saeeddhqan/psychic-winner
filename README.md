@@ -28,7 +28,7 @@ Here's a list of TODOs for further explorations:
  - Using autoencoder for feature selection and dimention reduction.
  - Using random autoencoder for creating over sampling data.
  - Experiment the effect of under|over sampling methods on Torch models.
-
+ - Cost-sensitive methods.
 I hope I have met (at least some of) your expectations.
 
 ## Requirements
